@@ -6,6 +6,11 @@ import math
 printChars = " -~+#&0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 basicFun = lambda value: math.sin(value)
 
+def product(arr):
+  result = 1.0
+  for item in arr:
+    result *= item
+  return result
 
 
 class World:
@@ -36,7 +41,7 @@ class World:
   def spawn(self,arr):
     for xOff,arrRow in enumerate(arr):
       for yOff,arrItem in enumerate(arrRow):
-        self.cells[self.t%self.layerCount][self.size[1]/2+yOff][self.size[0]/2+xOff] = arrItem
+        self.cells[self.t%self.layerCount][int(self.size[1]/2+yOff)][int(self.size[0]/2+xOff)] = arrItem
     print("spawn completed.")
     
   def getNeighborhood(self,layerIndex,x,y):
