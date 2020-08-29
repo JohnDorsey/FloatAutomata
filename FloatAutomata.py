@@ -39,14 +39,18 @@ class World:
         self.cells[self.t%self.layerCount][self.size[1]/2+yOff][self.size[0]/2+xOff] = arrItem
     print("spawn completed.")
     
-  def evalNeighborhood(self,layerIndex,x,y):
-    return sum(self.cells[layerIndex][(y+j)%self.size[1]][(x+i)%self.size[0]] for i,j in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)])
+  def getNeighborhood(self,layerIndex,x,y):
+    return (self.cells[layerIndex][(y+j)%self.size[1]][(x+i)%self.size[0]] for i,j in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)])
     
-  def advance(self,fun):
+  def evalNeighborhood(self,layerIndex,x,y):
+    return sum(self.getNeighborhood(layerIndex,x,y))
+    
+  def advance(self,fun,isFunctionOfArr=False):
     self.t += 1
+    inputProviderFun = (self.getNeighborhood if isFunctionOfArr else self.evalNeighborhood)
     for y in range(self.size[1]):
       for x in range(self.size[0]):
-        self.cells[self.t%self.layerCount][y][x] = fun(self.evalNeighborhood((self.t-1)%self.layerCount,x,y),x,y,self.t)
+        self.cells[self.t%self.layerCount][y][x] = fun(inputProviderFun((self.t-1)%self.layerCount,x,y),x,y,self.t)
 
   def prettyPrint(self):
     print("  +"+"-"*(self.size[0]-4))

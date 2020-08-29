@@ -4,6 +4,8 @@ import pygame.event
 showingWindow = False
 screen = None
 basicPaletteFun = lambda value: [0,min(max(0,int(255*value)),255),0]
+signedPaletteFun = lambda value: [0,min(max(int(255*(0.5+0.5*value)),0),255),0]
+coloredSignedPaletteFun = lambda value: [min(max(int(255*-value),0),255),min(max(int(255*value),0),255),0]
 size = [1024,1024]
 
 pygame.init()
