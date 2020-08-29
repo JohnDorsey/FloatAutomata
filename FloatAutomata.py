@@ -1,4 +1,5 @@
 
+
 import math
 
 
@@ -25,6 +26,18 @@ class World:
       for y in range(self.size[1]):
         for x in range(self.size[0]):
           self.cells[layerIndex][y][x] *= a
+          
+  def fill(self,a):
+    for layerIndex in range(self.layerCount):
+      for y in range(self.size[1]):
+        for x in range(self.size[0]):
+          self.cells[layerIndex][y][x] = a
+          
+  def spawn(self,arr):
+    for xOff,arrRow in enumerate(arr):
+      for yOff,arrItem in enumerate(arrRow):
+        self.cells[self.t%self.layerCount][self.size[1]/2+yOff][self.size[0]/2+xOff] = arrItem
+    print("spawn completed.")
     
   def evalNeighborhood(self,layerIndex,x,y):
     return sum(self.cells[layerIndex][(y+j)%self.size[1]][(x+i)%self.size[0]] for i,j in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)])
@@ -43,11 +56,9 @@ class World:
       print("|"+"".join(printChars[int(min(math.floor(6*cellState),5))] for cellState in row)+"|")
     print("+"+"-"*self.size[0]+"+")
 
-  def simulate(self,fun,targetTime,printModulus=1,stimulusFun=None):
-    """if stimulusFun == None:
-      stimulusFun = lambda t: 0"""
+  def simulate(self,fun,targetTime,renderModulus=1,stimulusFun=None):
     while True:
-      if self.t%printModulus==0:
+      if self.t%renderModulus==0:
         self.prettyPrint()
       if stimulusFun:
         self.cells[self.t%self.layerCount][self.size[1]/2][self.size[0]/2] += stimulusFun(self.t)
@@ -78,3 +89,10 @@ fun = lambda x,t: math.sin(x/(a-t/(524288.0)))**2
   chaotic at a=3.1 t=49280
 """
 
+
+
+"""
+for iter in range(256):
+  pr.draw(world.cells[world.t%world.layerCount],pr.basicPaletteFun,saving=True,filename=("FloatAutomata_exp(abs(sin(x))y)_at_iter_"+str(iter)))
+  world.advance(lambda value,x,y,t: abs(math.sin(value)*(x/100.0))**(y/100.0))
+"""
