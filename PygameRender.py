@@ -4,13 +4,13 @@ import pygame.event
 showingWindow = False
 screen = None
 basicPaletteFun = lambda value: [0,min(max(0,int(255*value)),255),0]
-
+size = [1024,1024]
 
 pygame.init()
 if showingWindow:
-  screen = pygame.display.set_mode([1280,720])
+  screen = pygame.display.set_mode(size)
   pygame.display.set_caption("FloatAutomata")
-back = pygame.Surface([1280,720])
+back = pygame.Surface(size)
 
 def close():
   if showWindow:
