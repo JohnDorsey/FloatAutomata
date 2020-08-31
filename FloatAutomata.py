@@ -7,6 +7,7 @@ printChars = " -~+#&0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWX
 basicFun = lambda value: math.sin(value)
 
 def product(arr):
+  """return the product of all numbers in an array - useful for constructing new rules for cell updates."""
   result = 1.0
   for item in arr:
     result *= item
@@ -15,11 +16,11 @@ def product(arr):
 
 class World:
   def __init__(self,layerCount=2,size=(32,32),wrap="torus"):
-    assert wrap=="torus"
+    assert wrap=="torus" #world wrap cannot be turned off in this design.
     self.size = size
     self.wrap = wrap
     self.t = 0
-    self.layerCount = layerCount
+    self.layerCount = layerCount #layers are used to store world 
     self.reset()
     
   def reset(self):
@@ -27,18 +28,21 @@ class World:
     #self.cells[0][self.size[1]/2][self.size[0]/2] = 1.0
     
   def multiply(self,a):
+    """multiply every cell in the world by a."""
     for layerIndex in range(self.layerCount):
       for y in range(self.size[1]):
         for x in range(self.size[0]):
           self.cells[layerIndex][y][x] *= a
           
   def fill(self,a):
+    """set every cell in the world to a."""
     for layerIndex in range(self.layerCount):
       for y in range(self.size[1]):
         for x in range(self.size[0]):
           self.cells[layerIndex][y][x] = a
           
   def spawn(self,arr):
+    """spawn the 2d array of numbers into the world with its top-left corner at the center of the world."""
     for xOff,arrRow in enumerate(arr):
       for yOff,arrItem in enumerate(arrRow):
         self.cells[self.t%self.layerCount][int(self.size[1]/2+yOff)][int(self.size[0]/2+xOff)] = arrItem
@@ -48,6 +52,7 @@ class World:
     return (self.cells[layerIndex][(y+j)%self.size[1]][(x+i)%self.size[0]] for i,j in [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)])
     
   def evalNeighborhood(self,layerIndex,x,y):
+    """This function turns an array of neighbors into a single number for functions that need it, as in World.advance(...,isFunOfArr=False)"""
     return sum(self.getNeighborhood(layerIndex,x,y))
     
   def advance(self,fun,isFunctionOfArr=False):
