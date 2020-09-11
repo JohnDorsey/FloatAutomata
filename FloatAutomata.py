@@ -56,28 +56,30 @@ class World:
     return sum(self.getNeighborhood(layerIndex,x,y))
     
   def advance(self,fun,isFunctionOfArr=False):
+    """advance the whole world by one iteration."""
     self.t += 1
-    inputProviderFun = (self.getNeighborhood if isFunctionOfArr else self.evalNeighborhood)
+    inputProviderFun = (self.getNeighborhood if isFunctionOfArr else self.evalNeighborhood) #choose either a function that gives an array or a function that gives the result of evaluating an array, depending on what the world rule provided in the argument _fun_ needs as an argument.
     for y in range(self.size[1]):
       for x in range(self.size[0]):
         self.cells[self.t%self.layerCount][y][x] = fun(inputProviderFun((self.t-1)%self.layerCount,x,y),x,y,self.t)
 
   def prettyPrint(self):
-    print("  +"+"-"*(self.size[0]-4))
-    print("  | t="+str(self.t))
-    print("+-+"+"-"*(self.size[0]-4)+"--+")
+    print("  +"+"-"*(self.size[0]-4)) #info tab top border.
+    print("  | t="+str(self.t)) #info tab content.
+    print("+-+"+"-"*(self.size[0]-4)+"--+") #divider between info tab and printed frame.
     for y,row in enumerate(self.cells[self.t%self.layerCount]):
-      print("|"+"".join(printChars[int(min(math.floor(6*cellState),5))] for cellState in row)+"|")
-    print("+"+"-"*self.size[0]+"+")
+      print("|"+"".join(printChars[int(min(math.floor(6*cellState),5))] for cellState in row)+"|") #a line of the printed frame.
+    print("+"+"-"*self.size[0]+"+") #printed frame bottom border.
 
   def simulate(self,fun,targetTime,renderModulus=1,stimulusFun=None):
+    """This method provides a simple way to loop World.advance with adjustable monitoring."""
     while True:
       if self.t%renderModulus==0:
         self.prettyPrint()
       if stimulusFun:
-        self.cells[self.t%self.layerCount][self.size[1]/2][self.size[0]/2] += stimulusFun(self.t)
+        self.cells[self.t%self.layerCount][self.size[1]/2][self.size[0]/2] += stimulusFun(self.t) #if provided, use the stimulus function (a function of time) to increase the value of the cell at the center of the world, to help detect world rules that can sustain life.
       self.advance(fun)
-      if self.t >= targetTime:
+      if self.t >= targetTime: #always print the world when finished.
         self.prettyPrint()
         return
 
